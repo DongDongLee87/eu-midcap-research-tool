@@ -55,9 +55,13 @@ def get_financials(ticker: str, force_refresh: bool = False) -> pd.DataFrame:
     fx_date, ticker.
 
     Original-currency columns match the company's own reported figures 1:1
-    (for sanity-checking against public filings); the _eur columns are what
-    comparables.py and valuation.py use so multiple companies can be ranked
-    and charted on one basis.
+    (for sanity-checking against public filings). The _eur columns exist
+    for one specific purpose: comparables.py needs each peer's market cap
+    in a common currency to check it against the eu_midcap_universe's
+    EUR 1-10bn screening band. They are NOT needed for multiples (EV/EBITDA,
+    P/E, etc.) — those are self-ratios where currency cancels out — nor for
+    the football field, which is single-company and can stay in that
+    company's own reporting currency throughout.
 
     Reads from parquet cache in data/cache/ if fresh (< 24h old),
     otherwise pulls from yfinance and re-caches.
