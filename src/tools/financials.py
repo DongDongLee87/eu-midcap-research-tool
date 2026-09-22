@@ -25,10 +25,19 @@ def _cache_path(ticker: str) -> Path:
     return CACHE_DIR / f"{ticker.replace('.', '_')}_financials.parquet"
 
 
-def _fx_rate_to_eur(currency: str) -> tuple[float, str]:
-    """Return (rate, as_of_date) to convert 1 unit of `currency` into EUR."""
+def fx_rate_to_eur(currency: str) -> tuple[float, str]:
+    """
+    Return (rate, as_of_date) to convert 1 unit of `currency` into EUR.
+
+    yfinance reports LSE-listed tickers' quote currency as "GBp" (pence),
+    but aggregate fields like marketCap are already expressed in GBP, not
+    pence — so GBp is treated as GBP here. Only per-share prices need the
+    /100 pence-to-pound adjustment, which is handled by callers, not here.
+    """
     if currency == "EUR":
         return 1.0, dt.date.today().isoformat()
+    if currency == "GBp":
+        currency = "GBP"
 
     pair = f"{currency}EUR=X"
     hist = yf.Ticker(pair).history(period="5d")
@@ -86,7 +95,7 @@ def get_financials(ticker: str, force_refresh: bool = False) -> pd.DataFrame:
     if income is None or income.empty:
         raise ValueError(f"yfinance returned no income statement for {ticker}")
 
-    fx_rate, fx_date = _fx_rate_to_eur(currency)
+    fx_rate, fx_date = fx_rate_to_eur(currency)
 
     data = {
         "revenue": _extract_row(income, "Total Revenue"),
@@ -102,6 +111,11 @@ def get_financials(ticker: str, force_refresh: bool = False) -> pd.DataFrame:
     df = pd.DataFrame(data)
     df.index.name = "fiscal_year_end"
     df = df.sort_index()
+
+    # Some issuers have no "Net Debt" line (or it's NaN in the latest year)
+    # in yfinance's balance sheet — fall back to total_debt - cash.
+    fallback_net_debt = df["total_debt"] - df["cash"]
+    df["net_debt"] = df["net_debt"].fillna(fallback_net_debt)
 
     # yfinance's free annual statements only cover ~4 fiscal years; older
     # columns come back as an all-NaN placeholder row. Drop them rather than
@@ -121,6 +135,38 @@ def get_financials(ticker: str, force_refresh: bool = False) -> pd.DataFrame:
 
     df.to_parquet(cache_file)
     return df
+
+
+def get_market_snapshot(ticker: str) -> dict:
+    """
+    Return current-quote data needed for comp-table multiples that the
+    annual statements don't carry: market_cap, share price, shares
+    outstanding — all in the company's own reporting currency — plus
+    market_cap_eur for universe screening against the EUR 1-10bn band.
+    """
+    t = yf.Ticker(ticker)
+    info = t.info
+    currency = info.get("currency", "EUR")
+    market_cap = info.get("marketCap")
+
+    if market_cap is None:
+        raise ValueError(f"yfinance returned no marketCap for {ticker}")
+
+    fx_rate, fx_date = fx_rate_to_eur(currency)
+
+    return {
+        "ticker": ticker,
+        "company": info.get("shortName") or info.get("longName"),
+        "currency": currency,
+        "price": info.get("currentPrice") or info.get("regularMarketPrice"),
+        "shares_outstanding": info.get("sharesOutstanding"),
+        "market_cap": market_cap,
+        "market_cap_eur": market_cap * fx_rate,
+        "fx_rate_to_eur": fx_rate,
+        "fx_date": fx_date,
+        "sector": info.get("sector"),
+        "industry": info.get("industry"),
+    }
 
 
 if __name__ == "__main__":
