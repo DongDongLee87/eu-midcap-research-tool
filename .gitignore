@@ -1,0 +1,17 @@
+# Internal planning doc — not for public repo
+CLAUDE.md
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Data cache
+data/cache/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# OS
+.DS_Store
