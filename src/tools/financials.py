@@ -48,9 +48,16 @@ def _extract_row(df: pd.DataFrame, label: str) -> pd.Series:
 
 def get_financials(ticker: str, force_refresh: bool = False) -> pd.DataFrame:
     """
-    Return a tidy DataFrame indexed by fiscal year with columns:
-    revenue, ebitda, ebit, net_income, net_debt, total_debt, cash,
-    equity (all in EUR), plus currency, fx_rate, fx_date, fiscal_year_end.
+    Return a tidy DataFrame indexed by fiscal year with both the original
+    reporting-currency figures (revenue, ebitda, ebit, net_income, net_debt,
+    total_debt, cash, equity) and their EUR-converted counterparts
+    (revenue_eur, ebitda_eur, ...), plus currency_original, fx_rate_to_eur,
+    fx_date, ticker.
+
+    Original-currency columns match the company's own reported figures 1:1
+    (for sanity-checking against public filings); the _eur columns are what
+    comparables.py and valuation.py use so multiple companies can be ranked
+    and charted on one basis.
 
     Reads from parquet cache in data/cache/ if fresh (< 24h old),
     otherwise pulls from yfinance and re-caches.
@@ -97,10 +104,11 @@ def get_financials(ticker: str, force_refresh: bool = False) -> pd.DataFrame:
     # ship fabricated history.
     df = df.dropna(subset=["revenue"])
 
-    # Convert all monetary columns to EUR
+    # Keep original reporting-currency figures as-is (for verification against
+    # public filings) and add parallel EUR columns (for cross-company comps).
     money_cols = ["revenue", "ebitda", "ebit", "net_income", "net_debt", "total_debt", "cash", "equity"]
     for col in money_cols:
-        df[col] = df[col] * fx_rate
+        df[f"{col}_eur"] = df[col] * fx_rate
 
     df["currency_original"] = currency
     df["fx_rate_to_eur"] = fx_rate
