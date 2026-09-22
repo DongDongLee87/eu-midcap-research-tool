@@ -1,0 +1,11 @@
+{
+  "_comment": "Hand-set WACC / terminal growth assumptions per universe sector tag. Not derived from live beta/CAPM — deliberately simple, analyst-overridable inputs rather than a black-box calculation. WACC reflects typical EU industrial/materials capital structures (~7-9%); terminal growth is capped near long-run EU nominal GDP growth (~2%).",
+  "Materials": {
+    "wacc": 0.075,
+    "terminal_growth": 0.02
+  },
+  "Industrials": {
+    "wacc": 0.08,
+    "terminal_growth": 0.02
+  }
+}
