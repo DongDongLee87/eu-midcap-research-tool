@@ -73,6 +73,8 @@ def football_field_chart(ff: dict, current_price: float, currency: str) -> go.Fi
 def format_comp_table(comp: pd.DataFrame, universe: pd.DataFrame) -> pd.DataFrame:
     df = comp.copy()
     df["company"] = df.index.map(universe.set_index("ticker")["company"])
+    num_cols = ["market_cap", "ev", "ev_ebitda", "ev_sales", "pe", "roe", "net_debt_ebitda"]
+    df[num_cols] = df[num_cols].apply(pd.to_numeric, errors="coerce")
     # Negative earnings make P/E meaningless; show n.m. rather than a negative multiple.
     df.loc[df["pe"] < 0, "pe"] = float("nan")
     df["market_cap"] = df["market_cap"] / 1e9
@@ -145,16 +147,15 @@ st.caption(
 )
 
 st.subheader("Comparables")
-st.dataframe(
-    format_comp_table(result["comp_table"], universe).style.format(precision=2, na_rep="n.m."),
-    use_container_width=True,
-)
+# st.table renders the Styler as HTML, so na_rep works (st.dataframe shows "None").
+st.table(format_comp_table(result["comp_table"], universe).style.format(precision=2, na_rep="n.m."))
 st.caption(
     "Latest fiscal year, normalized EBITDA (ex one-offs), EV = market cap + net debt. Each row in the "
     "company's own reporting currency — ratios need no FX conversion."
 )
 
 with st.expander("DCF sensitivity (implied price per share)"):
+    st.caption("Rows: WACC. Columns: terminal growth.")
     st.dataframe(result["sensitivity"].style.format(precision=1), use_container_width=True)
 
 with st.expander("DCF assumptions"):
@@ -169,7 +170,7 @@ with st.expander("DCF assumptions"):
             f"{a['ebitda_margin']:.2%}", f"{a['tax_rate']:.2%}", f"{a['da_pct_revenue']:.2%}",
             f"{a['capex_pct_revenue']:.2%}", f"{a['nwc_pct_revenue']:.2%}",
         ],
-    }))
+    }).set_index("Assumption"))
 
 st.divider()
 st.caption(

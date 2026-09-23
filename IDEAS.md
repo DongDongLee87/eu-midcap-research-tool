@@ -11,6 +11,10 @@ the 5-day sprint unless explicitly moved into CLAUDE.md scope.
   honestly in the README limitations section (Day 5) as "demo company is
   larger than the tool's stated universe, chosen for recruiter recognition."
 
+- **2026-09-23 (post-sprint idea)**: Use AI to help pick which valuation
+  metrics fit a given company (e.g. flag when EV/Sales is misleading because
+  the target's margin differs sharply from peers). Not built in the sprint.
+
 ## Session log
 - **2026-09-23 (Day 4 end)**: App live at https://eu-midcap-research-tool.streamlit.app
   (public app, repo still private — flip repo public on Day 5). Verified from a
