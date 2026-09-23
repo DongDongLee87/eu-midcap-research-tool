@@ -87,7 +87,9 @@ def get_financials(ticker: str, force_refresh: bool = False) -> pd.DataFrame:
 
     t = yf.Ticker(ticker)
     info = t.info
-    currency = info.get("currency", "EUR")
+    # Statements can be in a different currency from the quote (Rockwool:
+    # quoted in DKK, reports in EUR), so use financialCurrency here.
+    currency = info.get("financialCurrency") or info.get("currency", "EUR")
 
     income = t.income_stmt
     balance = t.balance_sheet
@@ -139,30 +141,37 @@ def get_financials(ticker: str, force_refresh: bool = False) -> pd.DataFrame:
 
 def get_market_snapshot(ticker: str) -> dict:
     """
-    Return current-quote data needed for comp-table multiples that the
-    annual statements don't carry: market_cap, share price, shares
-    outstanding — all in the company's own reporting currency — plus
-    market_cap_eur for universe screening against the EUR 1-10bn band.
+    Return current-quote data: price and market_cap in the quote currency,
+    market_cap_fin in the financial-statement currency (so EV and P/E never
+    mix currencies), market_cap_eur for the EUR 1-10bn screening band, and
+    fin_to_quote_per_share to express a per-share value computed from the
+    statements in the same units as `price` (handles GBp pence quotes).
     """
     t = yf.Ticker(ticker)
     info = t.info
     currency = info.get("currency", "EUR")
+    financial_currency = info.get("financialCurrency") or currency
     market_cap = info.get("marketCap")
 
     if market_cap is None:
         raise ValueError(f"yfinance returned no marketCap for {ticker}")
 
-    fx_rate, fx_date = fx_rate_to_eur(currency)
+    fx_quote, fx_date = fx_rate_to_eur(currency)
+    fx_fin, _ = fx_rate_to_eur(financial_currency)
+    pence = 100 if currency == "GBp" else 1
 
     return {
         "ticker": ticker,
         "company": info.get("shortName") or info.get("longName"),
         "currency": currency,
+        "financial_currency": financial_currency,
         "price": info.get("currentPrice") or info.get("regularMarketPrice"),
         "shares_outstanding": info.get("sharesOutstanding"),
         "market_cap": market_cap,
-        "market_cap_eur": market_cap * fx_rate,
-        "fx_rate_to_eur": fx_rate,
+        "market_cap_fin": market_cap * fx_quote / fx_fin,
+        "market_cap_eur": market_cap * fx_quote,
+        "fin_to_quote_per_share": fx_fin / fx_quote * pence,
+        "fx_rate_to_eur": fx_quote,
         "fx_date": fx_date,
         "sector": info.get("sector"),
         "industry": info.get("industry"),

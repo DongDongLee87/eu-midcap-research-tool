@@ -24,25 +24,26 @@ def load_universe() -> pd.DataFrame:
 
 def select_peers(ticker: str, n: int = 6) -> list[str]:
     """
-    Return up to `n` peer tickers for `ticker`: same sector tag in the
-    universe CSV, market cap inside the EUR 1-10bn screening band, excluding
-    `ticker` itself, ranked by market-cap proximity to `ticker`'s own cap.
+    Return up to `n` peer tickers for `ticker` from the same sector in the
+    universe CSV, market cap inside the EUR 1-10bn band, excluding `ticker`.
+    Same hand-tagged peer_group ranks first (so Sika gets chemicals, not
+    steel/copper/cement); remaining slots are filled from the wider sector.
+    Within each tier, ranked by market-cap proximity.
 
-    `ticker` does not need to itself be inside the 1-10bn band (the target
-    company may be a large-cap, as Sika is) — only candidate peers are
-    screened against the band.
+    `ticker` itself is exempt from the band (Sika is a large-cap).
     """
     universe = load_universe()
     if ticker not in universe["ticker"].values:
         raise ValueError(f"{ticker} is not in the universe CSV — add it first")
 
-    sector = universe.loc[universe["ticker"] == ticker, "sector"].iloc[0]
-    candidates = universe[(universe["sector"] == sector) & (universe["ticker"] != ticker)]["ticker"].tolist()
+    target = universe.loc[universe["ticker"] == ticker].iloc[0]
+    candidates = universe[(universe["sector"] == target["sector"]) & (universe["ticker"] != ticker)]
 
     target_cap_eur = get_market_snapshot(ticker)["market_cap_eur"]
 
     scored = []
-    for peer in candidates:
+    for _, row in candidates.iterrows():
+        peer = row["ticker"]
         try:
             snap = get_market_snapshot(peer)
         except ValueError:
@@ -52,10 +53,11 @@ def select_peers(ticker: str, n: int = 6) -> list[str]:
             continue
         if not _has_usable_financials(peer):
             continue
-        scored.append((peer, abs(cap_eur - target_cap_eur)))
+        tier = 0 if row["peer_group"] == target["peer_group"] else 1
+        scored.append((peer, tier, abs(cap_eur - target_cap_eur)))
 
-    scored.sort(key=lambda x: x[1])
-    return [peer for peer, _ in scored[:n]]
+    scored.sort(key=lambda x: (x[1], x[2]))
+    return [peer for peer, _, _ in scored[:n]]
 
 
 def _has_usable_financials(ticker: str) -> bool:
@@ -76,7 +78,7 @@ def _company_row(ticker: str) -> dict:
     snap = get_market_snapshot(ticker)
     fy = _latest_fy(ticker)
 
-    market_cap = snap["market_cap"]
+    market_cap = snap["market_cap_fin"]
     net_debt = fy["net_debt"]
     ebitda = fy["ebitda"]
     revenue = fy["revenue"]
@@ -88,7 +90,7 @@ def _company_row(ticker: str) -> dict:
     return {
         "ticker": ticker,
         "company": snap["company"],
-        "currency": snap["currency"],
+        "currency": snap["financial_currency"],
         "fiscal_year_end": fy.name,
         "market_cap": market_cap,
         "ev": ev,

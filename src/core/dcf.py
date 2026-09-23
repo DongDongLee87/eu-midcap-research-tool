@@ -175,7 +175,7 @@ def run_dcf(ticker: str, sector: str) -> dict:
 
     equity_value = result["enterprise_value"] - assumptions["net_debt"]
     shares = snap["shares_outstanding"]
-    implied_share_price = equity_value / shares if shares else None
+    implied_share_price = equity_value / shares * snap["fin_to_quote_per_share"] if shares else None
 
     return {
         "ticker": ticker,
@@ -223,7 +223,7 @@ def sensitivity_matrix(
             fcfs = forecast_free_cash_flows(assumptions, w, g)
             result = discount_fcfs(fcfs, w, g)
             equity_value = result["enterprise_value"] - net_debt
-            price = equity_value / shares if shares else np.nan
+            price = equity_value / shares * snap["fin_to_quote_per_share"] if shares else np.nan
             grid.loc[f"{w:.2%}", f"{g:.2%}"] = price
 
     grid.index.name = "WACC"

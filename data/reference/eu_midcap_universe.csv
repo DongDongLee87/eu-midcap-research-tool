@@ -1,34 +1,34 @@
-ticker,company,country,currency,sector,subsector
-SIKA.SW,Sika AG,Switzerland,CHF,Materials,Specialty & Construction Chemicals
-AKE.PA,Arkema SA,France,EUR,Materials,Specialty Chemicals
-UMI.BR,Umicore SA,Belgium,EUR,Materials,Specialty Chemicals
-WIE.VI,Wienerberger AG,Austria,EUR,Materials,Construction Materials
-LXS.DE,Lanxess AG,Germany,EUR,Materials,Specialty Chemicals
-EVK.DE,Evonik Industries AG,Germany,EUR,Materials,Specialty Chemicals
-1COV.DE,Covestro AG,Germany,EUR,Materials,Specialty Chemicals
-FPE3.DE,Fuchs Petrolub SE,Germany,EUR,Materials,Specialty Chemicals
-NDA.DE,Aurubis AG,Germany,EUR,Materials,Metals & Mining
-GXI.DE,Gerresheimer AG,Germany,EUR,Materials,Packaging
-SZG.DE,Salzgitter AG,Germany,EUR,Materials,Steel
-VOE.VI,voestalpine AG,Austria,EUR,Materials,Steel
-PRY.MI,Prysmian SpA,Italy,EUR,Industrials,Electrical Equipment
-IP.MI,Interpump Group SpA,Italy,EUR,Industrials,Industrial Machinery
-BZU.MI,Buzzi SpA,Italy,EUR,Materials,Cement
-CRDA.L,Croda International PLC,United Kingdom,GBP,Materials,Specialty Chemicals
-VCT.L,Victrex PLC,United Kingdom,GBP,Materials,Specialty Polymers
-WEIR.L,Weir Group PLC,United Kingdom,GBP,Industrials,Industrial Machinery
-RSW.L,Renishaw PLC,United Kingdom,GBP,Industrials,Precision Instruments
-ROR.L,Rotork PLC,United Kingdom,GBP,Industrials,Industrial Machinery
-SPX.L,Spirax Group PLC,United Kingdom,GBP,Industrials,Industrial Machinery
-IMI.L,IMI PLC,United Kingdom,GBP,Industrials,Industrial Machinery
-BOY.L,Bodycote PLC,United Kingdom,GBP,Industrials,Materials Processing
-TREL-B.ST,Trelleborg AB,Sweden,SEK,Industrials,Industrial Rubber & Polymers
-SKF-B.ST,SKF AB,Sweden,SEK,Industrials,Industrial Machinery
-INDT.ST,Indutrade AB,Sweden,SEK,Industrials,Diversified Industrials
-LIAB.ST,Lindab International AB,Sweden,SEK,Materials,Building Products
-NOLA-B.ST,Nolato AB,Sweden,SEK,Materials,Specialty Polymers
-ROCK-B.CO,Rockwool A/S,Denmark,DKK,Materials,Construction Materials
-FLS.CO,FLSmidth & Co A/S,Denmark,DKK,Industrials,Industrial Machinery
-GF.SW,Georg Fischer AG,Switzerland,CHF,Industrials,Industrial Machinery
-SUN.SW,Sulzer AG,Switzerland,CHF,Industrials,Industrial Machinery
-BEAN.SW,Belimo Holding AG,Switzerland,CHF,Industrials,Building Automation
+ticker,company,country,currency,sector,subsector,peer_group
+SIKA.SW,Sika AG,Switzerland,CHF,Materials,Specialty & Construction Chemicals,Chemicals
+AKE.PA,Arkema SA,France,EUR,Materials,Specialty Chemicals,Chemicals
+UMI.BR,Umicore SA,Belgium,EUR,Materials,Specialty Chemicals,Chemicals
+WIE.VI,Wienerberger AG,Austria,EUR,Materials,Construction Materials,Building Materials
+LXS.DE,Lanxess AG,Germany,EUR,Materials,Specialty Chemicals,Chemicals
+EVK.DE,Evonik Industries AG,Germany,EUR,Materials,Specialty Chemicals,Chemicals
+1COV.DE,Covestro AG,Germany,EUR,Materials,Specialty Chemicals,Chemicals
+FPE3.DE,Fuchs Petrolub SE,Germany,EUR,Materials,Specialty Chemicals,Chemicals
+NDA.DE,Aurubis AG,Germany,EUR,Materials,Metals & Mining,Metals
+GXI.DE,Gerresheimer AG,Germany,EUR,Materials,Packaging,Packaging
+SZG.DE,Salzgitter AG,Germany,EUR,Materials,Steel,Metals
+VOE.VI,voestalpine AG,Austria,EUR,Materials,Steel,Metals
+PRY.MI,Prysmian SpA,Italy,EUR,Industrials,Electrical Equipment,Electrical
+IP.MI,Interpump Group SpA,Italy,EUR,Industrials,Industrial Machinery,Machinery
+BZU.MI,Buzzi SpA,Italy,EUR,Materials,Cement,Building Materials
+CRDA.L,Croda International PLC,United Kingdom,GBP,Materials,Specialty Chemicals,Chemicals
+VCT.L,Victrex PLC,United Kingdom,GBP,Materials,Specialty Polymers,Chemicals
+WEIR.L,Weir Group PLC,United Kingdom,GBP,Industrials,Industrial Machinery,Machinery
+RSW.L,Renishaw PLC,United Kingdom,GBP,Industrials,Precision Instruments,Machinery
+ROR.L,Rotork PLC,United Kingdom,GBP,Industrials,Industrial Machinery,Machinery
+SPX.L,Spirax Group PLC,United Kingdom,GBP,Industrials,Industrial Machinery,Machinery
+IMI.L,IMI PLC,United Kingdom,GBP,Industrials,Industrial Machinery,Machinery
+BOY.L,Bodycote PLC,United Kingdom,GBP,Industrials,Materials Processing,Machinery
+TREL-B.ST,Trelleborg AB,Sweden,SEK,Industrials,Industrial Rubber & Polymers,Machinery
+SKF-B.ST,SKF AB,Sweden,SEK,Industrials,Industrial Machinery,Machinery
+INDT.ST,Indutrade AB,Sweden,SEK,Industrials,Diversified Industrials,Machinery
+LIAB.ST,Lindab International AB,Sweden,SEK,Materials,Building Products,Building Materials
+NOLA-B.ST,Nolato AB,Sweden,SEK,Materials,Specialty Polymers,Chemicals
+ROCK-B.CO,Rockwool A/S,Denmark,DKK,Materials,Construction Materials,Building Materials
+FLS.CO,FLSmidth & Co A/S,Denmark,DKK,Industrials,Industrial Machinery,Machinery
+GF.SW,Georg Fischer AG,Switzerland,CHF,Industrials,Industrial Machinery,Machinery
+SUN.SW,Sulzer AG,Switzerland,CHF,Industrials,Industrial Machinery,Machinery
+BEAN.SW,Belimo Holding AG,Switzerland,CHF,Industrials,Building Automation,Building Materials

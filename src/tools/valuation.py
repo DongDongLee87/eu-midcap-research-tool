@@ -42,11 +42,8 @@ def multiples_valuation(ticker: str, n_peers: int = 6) -> dict:
         if raw_multiples.empty or metric is None:
             return {"low": None, "median": None, "high": None}
 
-        # Drop negative or extreme multiples (e.g. a peer whose EBITDA
-        # collapsed YoY, spiking its EV/EBITDA to 5-10x the peer median) —
-        # a single distorted denominator shouldn't set the football field's
-        # high end. Median is computed on the raw set first since it's a
-        # robust reference point for what counts as "extreme".
+        # Drop negative or extreme (>3x peer median) multiples so a single
+        # distorted denominator can't set the football field's high end.
         median_ref = raw_multiples.median()
         multiples = raw_multiples[(raw_multiples > 0) & (raw_multiples <= 3 * median_ref)]
         if multiples.empty:
@@ -61,7 +58,8 @@ def multiples_valuation(ticker: str, n_peers: int = 6) -> dict:
             key: {
                 "implied_ev": ev,
                 "implied_equity_value": ev - net_debt,
-                "implied_share_price": (ev - net_debt) / shares if shares else None,
+                # Floored at 0: limited liability means equity can't be worth less than nothing.
+                "implied_share_price": max(0.0, (ev - net_debt) / shares * snap["fin_to_quote_per_share"]) if shares else None,
             }
             for key, ev in implied_evs.items()
         }
