@@ -22,3 +22,6 @@ the 5-day sprint unless explicitly moved into CLAUDE.md scope.
   Cloud must run Python 3.12 — pinned pandas/numpy/pyarrow have no 3.14 wheels.
   Open decision for user: EV/Sales systematically undervalues Sika (18% EBITDA
   margin vs lower-margin peers) — replace with P/E or drop. Next: Day 5 narrative.
+- **2026-09-23 (Day 5)**: README, ATTRIBUTION.md, case_studies/sika_initiation.md
+  and 3 screenshots (captured from the live app) done. Remaining: user to
+  review the "Why I built it" / Development wording, then flip repo public.
