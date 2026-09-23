@@ -25,3 +25,7 @@ the 5-day sprint unless explicitly moved into CLAUDE.md scope.
 - **2026-09-23 (Day 5)**: README, ATTRIBUTION.md, case_studies/sika_initiation.md
   and 3 screenshots (captured from the live app) done. Remaining: user to
   review the "Why I built it" / Development wording, then flip repo public.
+- **2026-09-23 (sprint end)**: Commit emails rewritten to tung-hsien.lee@proton.me;
+  repo made public. All Day 1-5 done-criteria met. Open for user review: README
+  "Why I built it" wording, ATTRIBUTION "Development" wording, MBCC claim in the
+  case study, and the Day 2 manual check of 3 numbers (add to README Testing).
