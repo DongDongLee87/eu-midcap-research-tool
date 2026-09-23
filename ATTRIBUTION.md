@@ -22,4 +22,4 @@ No Dexter source code is used in this repository. The two projects are written i
 
 ## Development
 
-The code was written with an AI pair-programmer (Claude Code), and the commits are co-authored accordingly. I made the scope, peer-universe curation, valuation methodology and validation decisions, and reviewed every output.
+The code was written with an AI pair-programmer (Claude Code), and the commits are co-authored accordingly. I made the scope, peer-universe curation, valuation methodology and validation decisions, and reviewed every output manually.

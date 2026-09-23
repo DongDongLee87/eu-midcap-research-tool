@@ -1,6 +1,6 @@
 # Case study: Sika AG (SIKA.SW)
 
-An end-to-end run of the tool on one company, from raw statements to a football field. All figures are the tool's own output as of **23 September 2026** (share price CHF 187.45; FX snapshot the same day). Prices move, so a fresh run will differ slightly.
+An end-to-end run of the tool on one company, from raw statements to a football field. All figures are the tool's own output as of **23 September 2026** (share price CHF 187.15; FX snapshot the same day). Prices move, so a fresh run will differ slightly.
 
 This is a walkthrough of the method, not a recommendation.
 
@@ -14,12 +14,12 @@ The tool reads four fiscal years from Yahoo Finance; `yfinance` provides no fift
 
 | FY (Dec) | Revenue | EBITDA (normalized) | EBITDA (reported) | Net income | Net debt |
 |---|---:|---:|---:|---:|---:|
-| 2022 | 10,492 | 1,942 | 1,942 | 1,162 | 1,687 |
-| 2023 | 11,239 | 2,008 | 1,998 | 1,062 | 4,795 |
-| 2024 | 11,763 | 2,304 | 2,304 | 1,246 | 4,593 |
-| 2025 | 11,201 | 2,085 | 2,055 | 1,044 | 4,278 |
+| 2022 | 10,492 | 1,942 | 1,942 | 1,162 | 2,022 |
+| 2023 | 11,239 | 2,008 | 1,998 | 1,062 | 5,194 |
+| 2024 | 11,763 | 2,304 | 2,304 | 1,246 | 5,016 |
+| 2025 | 11,201 | 2,085 | 2,055 | 1,044 | 4,716 |
 
-The 2023 step-up in net debt reflects the debt-financed acquisition of MBCC Group. Revenue fell 4.8% in CHF in 2025. The revenue CAGR across the available window is 2.2%, and it drives year 1 of the DCF. For Sika, normalized and reported EBITDA are almost identical. That is not true for its peers.
+Net debt is total debt including IFRS 16 lease liabilities, minus cash. For FY2025, it is CHF 4,716m against CHF 4,734.5m in Sika's annual report. The 2023 step-up in net debt reflects the debt-financed acquisition of MBCC Group. Revenue fell 4.8% in CHF in 2025. The revenue CAGR across the available window is 2.2%, and it drives year 1 of the DCF. For Sika, normalized and reported EBITDA are almost identical. That is not true for its peers.
 
 ## 3. Building the peer set
 
@@ -42,10 +42,10 @@ Latest fiscal year, normalized EBITDA, EV = market cap + net debt. Each company 
 
 | | EV/EBITDA | EV/Sales | P/E | ROE | ND/EBITDA |
 |---|---:|---:|---:|---:|---:|
-| **Sika** | **16.5×** | **3.07×** | **28.8×** | **15.7%** | **2.05×** |
-| Peer median | 5.6× | 0.74× | — | — | — |
+| **Sika** | **16.7×** | **3.10×** | **28.8×** | **15.7%** | **2.26×** |
+| Peer median | 5.9× | 0.79× | — | — | — |
 
-Sika trades at about 3× the peer median on EV/EBITDA. Several peers are at cyclical lows: Lanxess has negative earnings (P/E shown as n.m.), and Arkema's P/E of ~70× reflects depressed earnings rather than a high valuation. Croda's reported EBITDA understated normalized EBITDA by 58%. Without normalization, it would have looked like a 19.7× "premium" peer instead of 12.4×.
+Sika trades at nearly 3× the peer median on EV/EBITDA. Several peers are at cyclical lows: Lanxess has negative earnings (P/E shown as n.m.), and Arkema's P/E of ~70× reflects depressed earnings rather than a high valuation. Croda's reported EBITDA understated normalized EBITDA by 58%. Without normalization, it would have looked like a 19.8× "premium" peer instead of 12.5×.
 
 ## 5. DCF
 
@@ -63,14 +63,14 @@ Unlevered FCF runs from CHF 1.37bn in year 1 to CHF 1.49bn in year 5.
 | Bridge | CHF |
 |---|---:|
 | Enterprise value | 24.95bn |
-| – Net debt (FY2025) | 4.28bn |
-| = Equity value | 20.67bn |
+| – Net debt (FY2025, incl. leases) | 4.72bn |
+| = Equity value | 20.23bn |
 | ÷ Shares outstanding | 160.4m |
-| **= Implied value per share** | **128.8** |
+| **= Implied value per share** | **126.1** |
 
 ![DCF sensitivity and assumptions](../docs/screenshots/03_dcf.png)
 
-In the sensitivity grid, the current price (CHF 187) is only reached around **6.5% WACC with 2.5% terminal growth** (185.1). Read in reverse, the market is either discounting Sika at a lower cost of capital than a generic Materials name, or expecting growth well above the 2.2% historical CAGR. Both are plausible for a business with Sika's pricing power and track record, and deciding between them is the analyst's call.
+In the sensitivity grid, the current price (CHF 187) is only reached in the low-WACC, high-growth corner: **6.5% WACC with 2.5–3.0% terminal growth** (CHF 182–210). Read in reverse, the market is either discounting Sika at a lower cost of capital than a generic Materials name, or expecting growth well above the 2.2% historical CAGR. Both are plausible for a business with Sika's pricing power and track record, and deciding between them is the analyst's call.
 
 ## 6. Football field
 
@@ -78,10 +78,10 @@ In the sensitivity grid, the current price (CHF 187) is only reached around **6.
 
 | Method | Low | Mid | High |
 |---|---:|---:|---:|
-| DCF (WACC 6.5–8.5% × g 1–3%) | 89.5 | 128.8 | 213.0 |
-| EV/EBITDA (peer min / median / max) | 30.5 | 46.3 | 134.3 |
-| EV/Sales (peer min / median / max) | 0.0 | 22.6 | 86.6 |
-| *Current price* | | *187.45* | |
+| DCF (WACC 6.5–8.5% × g 1–3%) | 86.8 | 126.1 | 210.2 |
+| EV/EBITDA (peer min / median / max) | 30.7 | 47.2 | 133.3 |
+| EV/Sales (peer min / median / max) | 0.0 | 22.5 | 85.5 |
+| *Current price* | | *187.15* | |
 
 **How to read it.** The three methods don't converge, and the divergence is the finding:
 

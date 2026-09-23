@@ -122,14 +122,15 @@ def get_financials(ticker: str, force_refresh: bool = False) -> pd.DataFrame:
     df.index.name = "fiscal_year_end"
     df = df.sort_index()
 
-    # Some issuers have no "Net Debt" line (or it's NaN in the latest year)
-    # in yfinance's balance sheet — fall back to total_debt - cash.
     # "ebitda" is Normalized EBITDA (ex one-offs such as impairments); fall
     # back to reported where yfinance has no normalized figure.
     df["ebitda"] = df["ebitda"].fillna(df["ebitda_reported"])
 
-    fallback_net_debt = df["total_debt"] - df["cash"]
-    df["net_debt"] = df["net_debt"].fillna(fallback_net_debt)
+    # Yahoo's "Net Debt" line excludes IFRS 16 lease liabilities, but EBITDA is
+    # post-IFRS 16 (lease cost excluded), so EV must include leases to be
+    # consistent. Total Debt includes leases; Yahoo's line is only a fallback.
+    # Checked vs Sika AR 2025: 4,716 here vs 4,734.5 reported (Yahoo line: 4,278).
+    df["net_debt"] = (df["total_debt"] - df["cash"]).fillna(df["net_debt"])
 
     # yfinance's free annual statements only cover ~4 fiscal years; older
     # columns come back as an all-NaN placeholder row. Drop them rather than
