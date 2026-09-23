@@ -16,6 +16,9 @@ CACHE_DIR = Path(__file__).resolve().parents[2] / "data" / "cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 CACHE_MAX_AGE_HOURS = 24
+# Bump whenever a stored field's definition changes, so stale cache files
+# (and the app's st.cache_data results) are not reused. v2: net debt incl. leases.
+CACHE_VERSION = 2
 
 # yfinance line-item labels used from each statement
 INCOME_FIELDS = ["Total Revenue", "EBITDA", "EBIT", "Net Income"]
@@ -23,7 +26,7 @@ BALANCE_FIELDS = ["Net Debt", "Total Debt", "Cash And Cash Equivalents", "Stockh
 
 
 def _cache_path(ticker: str) -> Path:
-    return CACHE_DIR / f"{ticker.replace('.', '_')}_financials.parquet"
+    return CACHE_DIR / f"{ticker.replace('.', '_')}_financials_v{CACHE_VERSION}.parquet"
 
 
 @lru_cache(maxsize=None)

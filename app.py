@@ -7,7 +7,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from src.tools.comparables import load_universe
-from src.tools.financials import fx_rate_to_eur, get_info
+from src.tools.financials import CACHE_VERSION, fx_rate_to_eur, get_info
 from src.tools.valuation import build_football_field
 
 BAR_COLOR = "#2a78d6"
@@ -17,7 +17,7 @@ st.set_page_config(page_title="EU Mid-Cap Valuation", layout="wide")
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def run_pipeline(ticker: str, sector: str) -> dict:
+def run_pipeline(ticker: str, sector: str, cache_version: int) -> dict:
     # Per-process yfinance caches would otherwise never expire.
     get_info.cache_clear()
     fx_rate_to_eur.cache_clear()
@@ -122,7 +122,7 @@ sector = universe.loc[universe["ticker"] == ticker, "sector"].iloc[0]
 
 with st.spinner(f"Pulling data for {ticker} and its peers (first run ~30s)..."):
     try:
-        result = run_pipeline(ticker, sector)
+        result = run_pipeline(ticker, sector, CACHE_VERSION)
     except Exception as e:
         st.error(f"Data retrieval failed: {e}. Yahoo Finance may be rate-limiting — try again in a minute.")
         st.stop()
