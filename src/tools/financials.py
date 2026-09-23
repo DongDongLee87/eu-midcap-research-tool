@@ -6,6 +6,7 @@ yfinance, normalise to EUR, and cache the result as parquet.
 from __future__ import annotations
 
 import datetime as dt
+from functools import lru_cache
 from pathlib import Path
 
 import pandas as pd
@@ -25,6 +26,7 @@ def _cache_path(ticker: str) -> Path:
     return CACHE_DIR / f"{ticker.replace('.', '_')}_financials.parquet"
 
 
+@lru_cache(maxsize=None)
 def fx_rate_to_eur(currency: str) -> tuple[float, str]:
     """
     Return (rate, as_of_date) to convert 1 unit of `currency` into EUR.
@@ -47,6 +49,11 @@ def fx_rate_to_eur(currency: str) -> tuple[float, str]:
     rate = float(hist["Close"].iloc[-1])
     as_of = hist.index[-1].date().isoformat()
     return rate, as_of
+
+
+@lru_cache(maxsize=None)
+def get_info(ticker: str) -> dict:
+    return yf.Ticker(ticker).info
 
 
 def _extract_row(df: pd.DataFrame, label: str) -> pd.Series:
@@ -86,7 +93,7 @@ def get_financials(ticker: str, force_refresh: bool = False) -> pd.DataFrame:
             return pd.read_parquet(cache_file)
 
     t = yf.Ticker(ticker)
-    info = t.info
+    info = get_info(ticker)
     # Statements can be in a different currency from the quote (Rockwool:
     # quoted in DKK, reports in EUR), so use financialCurrency here.
     currency = info.get("financialCurrency") or info.get("currency", "EUR")
@@ -101,7 +108,8 @@ def get_financials(ticker: str, force_refresh: bool = False) -> pd.DataFrame:
 
     data = {
         "revenue": _extract_row(income, "Total Revenue"),
-        "ebitda": _extract_row(income, "EBITDA"),
+        "ebitda_reported": _extract_row(income, "EBITDA"),
+        "ebitda": _extract_row(income, "Normalized EBITDA"),
         "ebit": _extract_row(income, "EBIT"),
         "net_income": _extract_row(income, "Net Income"),
         "net_debt": _extract_row(balance, "Net Debt"),
@@ -116,6 +124,10 @@ def get_financials(ticker: str, force_refresh: bool = False) -> pd.DataFrame:
 
     # Some issuers have no "Net Debt" line (or it's NaN in the latest year)
     # in yfinance's balance sheet — fall back to total_debt - cash.
+    # "ebitda" is Normalized EBITDA (ex one-offs such as impairments); fall
+    # back to reported where yfinance has no normalized figure.
+    df["ebitda"] = df["ebitda"].fillna(df["ebitda_reported"])
+
     fallback_net_debt = df["total_debt"] - df["cash"]
     df["net_debt"] = df["net_debt"].fillna(fallback_net_debt)
 
@@ -126,7 +138,7 @@ def get_financials(ticker: str, force_refresh: bool = False) -> pd.DataFrame:
 
     # Keep original reporting-currency figures as-is (for verification against
     # public filings) and add parallel EUR columns (for cross-company comps).
-    money_cols = ["revenue", "ebitda", "ebit", "net_income", "net_debt", "total_debt", "cash", "equity"]
+    money_cols = ["revenue", "ebitda", "ebitda_reported", "ebit", "net_income", "net_debt", "total_debt", "cash", "equity"]
     for col in money_cols:
         df[f"{col}_eur"] = df[col] * fx_rate
 
@@ -147,8 +159,7 @@ def get_market_snapshot(ticker: str) -> dict:
     fin_to_quote_per_share to express a per-share value computed from the
     statements in the same units as `price` (handles GBp pence quotes).
     """
-    t = yf.Ticker(ticker)
-    info = t.info
+    info = get_info(ticker)
     currency = info.get("currency", "EUR")
     financial_currency = info.get("financialCurrency") or currency
     market_cap = info.get("marketCap")

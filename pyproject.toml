@@ -4,11 +4,13 @@ version = "0.1.0"
 description = "Comparables and football-field valuation tool for EU mid-cap equities"
 requires-python = ">=3.11"
 dependencies = [
-    "yfinance>=1.7.0",
-    "pandas>=2.2.3",
-    "pyarrow>=18.0.0",
-    "streamlit>=1.38",
-    "plotly>=5.24",
+    "yfinance==1.7.0",
+    "curl_cffi==0.16.3",
+    "pandas==2.2.3",
+    "numpy==2.1.2",
+    "pyarrow==18.0.0",
+    "streamlit==1.39.0",
+    "plotly==7.1.0",
 ]
 
 [build-system]

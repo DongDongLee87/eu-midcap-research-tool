@@ -68,6 +68,7 @@ def multiples_valuation(ticker: str, n_peers: int = 6) -> dict:
         "ticker": ticker,
         "currency": snap["currency"],
         "peers_used": peers.index.tolist(),
+        "comp_table": comp_table,
         "ev_ebitda": _implied_range("ev_ebitda", target_ebitda),
         "ev_sales": _implied_range("ev_sales", target_revenue),
     }
@@ -77,7 +78,9 @@ def build_football_field(ticker: str, sector: str, n_peers: int = 6) -> dict:
     """
     Assemble football-field data: {method: {"low": price, "mid": price, "high": price}}
     for DCF (sensitivity matrix extremes/base), EV/EBITDA multiples, and
-    EV/Sales multiples. All prices in the target's own reporting currency.
+    EV/Sales multiples. Prices are per share in the target's quote units.
+    Also returns the comp table, DCF base case and sensitivity grid so a UI
+    can render everything from one call.
     """
     mult = multiples_valuation(ticker, n_peers=n_peers)
     dcf_base = run_dcf(ticker, sector=sector)
@@ -109,6 +112,9 @@ def build_football_field(ticker: str, sector: str, n_peers: int = 6) -> dict:
         "currency": mult["currency"],
         "current_price": get_market_snapshot(ticker)["price"],
         "football_field": football_field,
+        "comp_table": mult["comp_table"],
+        "dcf": dcf_base,
+        "sensitivity": dcf_grid,
     }
 
 
@@ -116,4 +122,4 @@ if __name__ == "__main__":
     import json
 
     result = build_football_field("SIKA.SW", sector="Materials")
-    print(json.dumps(result, indent=2, default=float))
+    print(json.dumps(result["football_field"], indent=2, default=float))
