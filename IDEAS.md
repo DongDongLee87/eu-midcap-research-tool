@@ -12,3 +12,9 @@ the 5-day sprint unless explicitly moved into CLAUDE.md scope.
   larger than the tool's stated universe, chosen for recruiter recognition."
 
 ## Session log
+- **2026-09-23 (Day 4 end)**: App live at https://eu-midcap-research-tool.streamlit.app
+  (public app, repo still private — flip repo public on Day 5). Verified from a
+  logged-out browser: SIKA.SW and WEIR.L (cold, GBp) render in ~30s. Streamlit
+  Cloud must run Python 3.12 — pinned pandas/numpy/pyarrow have no 3.14 wheels.
+  Open decision for user: EV/Sales systematically undervalues Sika (18% EBITDA
+  margin vs lower-margin peers) — replace with P/E or drop. Next: Day 5 narrative.
