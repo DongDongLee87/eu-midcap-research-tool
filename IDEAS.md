@@ -16,7 +16,7 @@ the 5-day sprint unless explicitly moved into CLAUDE.md scope.
   the target's margin differs sharply from peers). Not built in the sprint.
   → Folded into roadmap item 2 below.
 
-## Post-sprint roadmap (requested 2026-09-23, not started)
+## Post-sprint roadmap (requested 2026-09-23 → scheduled in CLAUDE.md §9)
 
 1. **Peer group selection criteria.** Today: hand-tagged `peer_group` +
    EUR 1-10bn band + market-cap proximity. Ideas: explicit criteria
@@ -48,8 +48,9 @@ the 5-day sprint unless explicitly moved into CLAUDE.md scope.
    `forecast_free_cash_flows(assumptions, wacc, g)` already takes an
    assumptions dict, so overrides slot straight in.
 
-Before starting: write a scope + time budget for this phase (as CLAUDE.md
-did for the sprint). Suggested order by effort vs value: 5 → 3 → 4 → 1 → 2.
+Scoped into CLAUDE.md §9 (Phase 2, 6 days × ~4h), in the order 5 → 3 → 4 →
+1 → 2 plus a docs day. The "AI-assisted" part of item 2 is out of Phase 2
+scope; the ranking is rule-based.
 
 ## Session log
 - **2026-09-23 (Day 4 end)**: App live at https://eu-midcap-research-tool.streamlit.app
